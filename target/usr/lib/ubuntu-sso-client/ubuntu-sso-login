@@ -1,0 +1,71 @@
+#! /usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# Copyright 2009-2012 Canonical Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3, as published
+# by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranties of
+# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
+# PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# In addition, as a special exception, the copyright holders give
+# permission to link the code of portions of this program with the
+# OpenSSL library under certain conditions as described in each
+# individual source file, and distribute linked combinations
+# including the two.
+# You must obey the GNU General Public License in all respects
+# for all of the code used other than OpenSSL.  If you modify
+# file(s) with this exception, you may extend this exception to your
+# version of the file(s), but you are not obligated to do so.  If you
+# do not wish to do so, delete this exception statement from your
+# version.  If you delete this exception statement from all source
+# files in the program, then also delete it here.
+"""Start the sso service."""
+
+# Invalid name "ubuntu-sso-login", pylint: disable=C0103
+
+# import decimal even if we don't need it, pylint: disable=W0611
+import decimal
+assert(decimal)
+# This is a workaround for LP: #467397. Some module in our depency chain sets
+# the locale and imports decimal, and that generates the following trace:
+# Traceback (most recent call last):
+#   File "/usr/lib/ubuntu-sso-client/ubuntu-sso-login", line 33
+#     from ubuntu_sso.main import SSOLogin
+#   File "/usr/lib/pymodules/python2.6/ubuntu_sso/main.py", line 42
+#     from lazr.restfulclient.resource import ServiceRoot
+#   File "/usr/lib/python2.6/dist-packages/lazr/restfulclient/resource.py",
+# line 34
+#     import simplejson
+#   File "/usr/lib/pymodules/python2.6/simplejson/__init__.py", line 109
+#     from decimal import Decimal
+#   File "/usr/lib/python2.6/decimal.py", line 3649, in <module>
+#     val = globals()[globalname]
+# KeyError: 'ROUND_CEiLiNG'
+
+import os
+import sys
+
+if sys.platform in ('win32', 'darwin'):
+    from PyQt4 import QtGui
+    # need to create the QApplication before installing the reactor
+    if os.environ.get('TESTABILITY', False):
+        sys.argv.append('-testability')
+    app = QtGui.QApplication(sys.argv)
+
+    # pylint: disable=F0401
+    import qt4reactor
+    qt4reactor.install()
+
+from ubuntu_sso.main import main
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,26 @@
+#! /bin/bash
+if [ $# = 0 ]; then
+    echo "normal start"
+    cd /usr/bin
+    ./kuaipan4uk #1>~/.config/Ubuntukylin/test.out  2>~/.config/Ubuntukylin/test.err
+else
+    if [ $1 = "restart" ]; then
+        echo "restart"
+	sleep 1 # wait SDK to quit for at most 1 sec.
+        killall kuaipan4uk #1>~/.config/Ubuntukylin/test.out  2>~/.config/Ubuntukylin/test.err
+        sleep 1
+	cd /usr/bin
+	./kuaipan4uk #1>~/.config/Ubuntukylin/test.out  2>~/.config/Ubuntukylin/test.err
+    else
+	if [ $1 = "setauto" ]; then
+		echo "set auto start"
+	else
+		if [ $1 = "unsetauto" ]; then
+			echo "unset auto start"
+		else
+			echo "par error"
+		fi
+	fi
+        
+    fi
+fi
